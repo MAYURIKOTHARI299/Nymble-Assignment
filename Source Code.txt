@@ -1,0 +1,250 @@
+import java.util.ArrayList;
+import java.util.List;
+
+// Enum for passenger types
+enum PassengerType {
+    STANDARD, GOLD, PREMIUM
+}
+
+// Class representing a passenger
+class Passenger {
+    private String name;
+    private int passengerNumber;
+    private double balance;
+    private PassengerType type;
+    private List<Activity> activities;
+
+    public Passenger(String name, int passengerNumber, PassengerType type) {
+        this.name = name;
+        this.passengerNumber = passengerNumber;
+        this.type = type;
+        this.activities = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPassengerNumber() {
+        return passengerNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public PassengerType getType() {
+        return type;
+    }
+
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
+    public void deductBalance(double amount) {
+        if (type == PassengerType.GOLD) {
+            amount -= amount * 0.1; // Apply 10% discount for gold passengers
+        }
+        balance -= amount;
+    }
+
+    public void addActivity(Activity activity) {
+        activities.add(activity);
+    }
+}
+
+// Class representing an activity
+class Activity {
+    private String name;
+    private String description;
+    private double cost;
+    private int capacity;
+    private Destination destination;
+
+    public Activity(String name, String description, double cost, int capacity, Destination destination) {
+        this.name = name;
+        this.description = description;
+        this.cost = cost;
+        this.capacity = capacity;
+        this.destination = destination;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public Destination getDestination() {
+        return destination;
+    }
+}
+
+// Class representing a destination
+class Destination {
+    private String name;
+    private List<Activity> activities;
+
+    public Destination(String name) {
+        this.name = name;
+        this.activities = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
+    public void addActivity(Activity activity) {
+        activities.add(activity);
+    }
+}
+
+// Class representing a travel package
+class TravelPackage {
+    private String name;
+    private int passengerCapacity;
+    private List<Passenger> passengers;
+    private List<Destination> itinerary;
+
+    public TravelPackage(String name, int passengerCapacity) {
+        this.name = name;
+        this.passengerCapacity = passengerCapacity;
+        this.passengers = new ArrayList<>();
+        this.itinerary = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPassengerCapacity() {
+        return passengerCapacity;
+    }
+
+    public List<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public List<Destination> getItinerary() {
+        return itinerary;
+    }
+
+    public void addPassenger(Passenger passenger) {
+        passengers.add(passenger);
+    }
+
+    public void addDestination(Destination destination) {
+        itinerary.add(destination);
+    }
+
+    // Function to print itinerary
+    public void printItinerary() {
+        System.out.println("Travel Package: " + name);
+        for (Destination destination : itinerary) {
+            System.out.println("Destination: " + destination.getName());
+            for (Activity activity : destination.getActivities()) {
+                System.out.println("Activity: " + activity.getName() + ", Cost: $" + activity.getCost() +
+                        ", Capacity: " + activity.getCapacity() + ", Description: " + activity.getDescription());
+            }
+        }
+    }
+
+    // Function to print passenger list
+    public void printPassengerList() {
+        System.out.println("Travel Package: " + name);
+        System.out.println("Passenger Capacity: " + passengerCapacity);
+        System.out.println("Number of Passengers Enrolled: " + passengers.size());
+        for (Passenger passenger : passengers) {
+            System.out.println("Passenger Name: " + passenger.getName() + ", Passenger Number: " +
+                    passenger.getPassengerNumber());
+        }
+    }
+
+    // Function to print details of an individual passenger
+    public void printPassengerDetails(Passenger passenger) {
+        System.out.println("Passenger Name: " + passenger.getName());
+        System.out.println("Passenger Number: " + passenger.getPassengerNumber());
+        if (passenger.getType() == PassengerType.STANDARD || passenger.getType() == PassengerType.GOLD) {
+            System.out.println("Balance: $" + passenger.getBalance());
+        }
+        System.out.println("Activities Enrolled:");
+        for (Activity activity : passenger.getActivities()) {
+            System.out.println("Destination: " + activity.getDestination().getName() + ", Activity: " +
+                    activity.getName() + ", Price Paid: $" + activity.getCost());
+        }
+    }
+
+    // Function to print details of activities with available spaces
+    public void printAvailableActivities() {
+        System.out.println("Available Activities:");
+        for (Destination destination : itinerary) {
+            for (Activity activity : destination.getActivities()) {
+                int remainingCapacity = activity.getCapacity() - activity.getDestination().getActivities().size();
+                if (remainingCapacity > 0) {
+                    System.out.println("Destination: " + destination.getName() + ", Activity: " +
+                            activity.getName() + ", Remaining Capacity: " + remainingCapacity);
+                }
+            }
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Example usage
+        TravelPackage travelPackage = new TravelPackage("Europe Trip", 50);
+
+        Destination paris = new Destination("Paris");
+        Destination rome = new Destination("Rome");
+
+        Activity eiffelTower = new Activity("Eiffel Tower Tour", "Guided tour of the Eiffel Tower", 50, 30, paris);
+        Activity louvreMuseum = new Activity("Louvre Museum Visit", "Visit the famous Louvre Museum", 40, 40, paris);
+        Activity colosseumTour = new Activity("Colosseum Tour", "Guided tour of the Colosseum", 60, 25, rome);
+        Activity vaticanMuseum = new Activity("Vatican Museum Visit", "Visit the Vatican Museums", 55, 35, rome);
+
+        paris.addActivity(eiffelTower);
+        paris.addActivity(louvreMuseum);
+        rome.addActivity(colosseumTour);
+        rome.addActivity(vaticanMuseum);
+
+        travelPackage.addDestination(paris);
+        travelPackage.addDestination(rome);
+
+        Passenger john = new Passenger("John", 1, PassengerType.STANDARD);
+        Passenger emily = new Passenger("Emily", 2, PassengerType.GOLD);
+        Passenger david = new Passenger("David", 3, PassengerType.PREMIUM);
+
+        travelPackage.addPassenger(john);
+        travelPackage.addPassenger(emily);
+        travelPackage.addPassenger(david);
+
+        john.deductBalance(eiffelTower.getCost());
+        emily.deductBalance(louvreMuseum.getCost());
+        emily.deductBalance(colosseumTour.getCost());
+
+        john.addActivity(eiffelTower);
+        emily.addActivity(louvreMuseum);
+        emily.addActivity(colosseumTour);
+
+        travelPackage.printItinerary();
+        travelPackage.printPassengerList();
+        travelPackage.printPassengerDetails(john);
+        travelPackage.printAvailableActivities();
+    }
+}
+
+
